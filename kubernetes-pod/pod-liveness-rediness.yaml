@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kuard
+spec:
+  containers:
+    - image: gcr.io/kuar-demo/kuard-amd64:blue
+      name: kuard
+      livenessProbe:
+        httpGet:
+          path: /healthy
+          port: 8080
+        initialDelaySeconds: 5 # 파드가 로드 run 상태 이후 5초 대기 후부터 실행
+        timeoutSeconds: 1 # 라이브니스 프로브의 헬스체크 대기시간
+        periodSeconds: 10 # 10초 간격으로
+        failureThreshold: 3 # 3번까지 실패 허용 4번째 실패시 재시작 가동
+      redinessProbe:
+        httpGet:
+          path: '/redy'
+          port: 8080
+        initialDelaySeconds: 5 # 파드가 로드 run 상태 이후 5초 대기 후부터 실행
+        timeoutSeconds: 1 # 라이브니스 프로브의 헬스체크 대기시간
+        periodSeconds: 10 # 10초 간격으로
+        failureThreshold: 3 # 3번까지 실패 허용 4번째 실패시 재시작 가동
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
